@@ -1,5 +1,7 @@
 var express = require('express');
 var db = require('./db');
+var mods = require('./models/index.js');
+var Promise = require('bluebird');
 
 // Middleware
 var morgan = require('morgan');
@@ -7,9 +9,13 @@ var parser = require('body-parser');
 
 // Router
 var router = require('./routes.js');
+var msg = {username:'busybee', text:'hello roach', roomname:'happy tree'};
 
 var app = express();
 module.exports.app = app;
+
+//mods.messages.post();
+//mods.messages.get();
 
 // Set what we are listening on.
 app.set("port", 3000);
@@ -24,11 +30,20 @@ app.use("/classes", router);
 // Serve the client files
 app.use(express.static(__dirname + "/../client"));
 
+//db.getRoomId('frank').then(function(roomId){console.log('I promise the room Id is', roomId)});
+// db.getRoomId('no room')
+// .then(function(iD){console.log('response is ' + iD)})
+// .catch(function(err){
+//   console.log('we got this error: ', err);
+// });
+//console.log('Does getRoomId return a promise? ', db.getRoomId('sally').instanceOf(Promise));
+
+db.addMessage(msg);
+
 app.get('/classes/chatterbox/', function(req, res){
-  var msg = {results:[{username:'ro', text:'hello', roomname:'lobby', objectId:'1'}]};
-  console.log('I got a get request from ' + req.url + ' sending back + ' + msg);
+  //console.log('I got a get request from ' + req.url + ' sending back + ' + msg);
   res.header('Content-Type', 'application/json');
-  res.status(200).send(msg);
+  res.status(200).send({results: [msg]});
 });
 
 app.post('/classes/chatterbox/', function(req, res){

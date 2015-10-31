@@ -62,7 +62,7 @@ var app = {
       data: { order: '-createdAt'},
       success: function(data) {
         // Don't bother if we have nothing to work with
-        data = JSON.parse(data);
+        //data = JSON.parse(data);
         if (!data.results || !data.results.length) {console.dir(data); return; }
 
         // Get the last message
