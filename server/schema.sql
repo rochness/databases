@@ -18,11 +18,11 @@ CREATE TABLE rooms (
 );
 
 CREATE TABLE messages (
-  messageId int(3),
+  objectId int(3) AUTO_INCREMENT,
   userId int(3),
-  msgtext varchar(140),
+  text varchar(140),
   roomId int(3),
-  PRIMARY KEY(messageId),
+  PRIMARY KEY(objectId),
   FOREIGN KEY(userId) REFERENCES users(userId),
   FOREIGN KEY(roomId) REFERENCES rooms(roomId)
 );

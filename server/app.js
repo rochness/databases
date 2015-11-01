@@ -2,6 +2,7 @@ var express = require('express');
 var db = require('./db');
 var mods = require('./models/index.js');
 var Promise = require('bluebird');
+var controller = require('./controllers')
 
 // Middleware
 var morgan = require('morgan');
@@ -38,17 +39,16 @@ app.use(express.static(__dirname + "/../client"));
 // });
 //console.log('Does getRoomId return a promise? ', db.getRoomId('sally').instanceOf(Promise));
 
-db.addMessage(msg);
+// db.addMessage(msg);
+//db.getAllMessages();
 
 app.get('/classes/chatterbox/', function(req, res){
   //console.log('I got a get request from ' + req.url + ' sending back + ' + msg);
-  res.header('Content-Type', 'application/json');
-  res.status(200).send({results: [msg]});
+  controller.messages.get(req,res);
 });
 
 app.post('/classes/chatterbox/', function(req, res){
-  console.log('I got a post request from ' + req.url + ' with data ' + JSON.stringify(req.body));
-  res.status(200).send();
+  controller.messages.post(req,res);
 });
 
 // If we are being run directly, run the server.

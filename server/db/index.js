@@ -8,7 +8,7 @@ var con = mysql.createConnection({
   host: 'localhost',
   user: 'root',
   password: 'rodam',
-  database: 'testDB'
+  database: 'chat'
 });
 
 // var connect = function(){
@@ -88,17 +88,26 @@ module.exports.addRoom = function(roomname){
   return addRow('rooms', ['roomname'], [roomname]);
 };
 
-module.exports.getAllmessagesFromDB = function(){
-
+module.exports.getAllMessages = function(){
+  return new Promise(function(resolve, reject){
+    con.query('SELECT objectId, username, roomname, text FROM messages INNER JOIN users ON messages.userId = users.userId ' + 
+      'INNER JOIN rooms ON messages.roomId=rooms.roomId ORDER BY objectId ASC;', 
+      function(err, rows, fields){
+        if(err){
+          reject(err);
+        } else {
+          console.dir(rows);
+          resolve(rows);
+        }
+      });
+  });
 };
 
 module.exports.addMessage = function(message){
-  var messageCols = ['userId', 'roomId', 'msgtext'];
+  var messageCols = ['userId', 'roomId', 'text'];
   var messageVals = [];
-  
-  console.log('1');
 
-  module.exports.getUserId(message.username).then(function(userId){
+  return module.exports.getUserId(message.username).then(function(userId){
     if (!userId){
       return module.exports.addUser(message.username).then(function(){
         return module.exports.getUserId(message.username).then(function(userId){
@@ -113,12 +122,10 @@ module.exports.addMessage = function(message){
       if (!roomId){
         return module.exports.addRoom(message.roomname).then(function(){
           return module.exports.getRoomId(message.roomname).then(function(roomId){
-            console.log('pushing ' + roomId);
             messageVals.push(roomId);
           });
         });
       } else {
-        console.log('roomId ', roomId);
         messageVals.push(roomId);
       }
     });
